@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css">
+    <style>
+        #count{
+            width: 200px;
+            height: 100px;
+            position: fixed;
+            background-color: rgba(250, 235, 215, 0.53);
+            border-radius: 5px;
+            text-align: center;
+        }
+        #a{
+            font-size: 40px;
+        }
+    </style>
+</head>
+<body>
+<div id="count">
+    <span>目前得分：</span><span id="a">00</span>
+</div>
+<script type="text/javascript">
+
+    window.onload = function () {
+
+        //创建画布
+        var canvas = document.createElement("canvas");
+        canvas.style.background = "#333";
+        canvas.width = window.screen.width;
+        canvas.height = window.screen.height;
+        document.body.appendChild(canvas);
+        var cxt=canvas.getContext("2d");
+
+        //  初始化能量块位置
+        var emy = new Emy("#f2f2f2",440,550);  //传递颜色
+        DrawEmy(emy);  //绘制
+        //获取emy位置
+        function Emy(color,x,y) {
+            this.color = color;
+            this.x = x;
+            this.y = y;
+        }
+
+        //重置方块
+        var reset = function () {
+            emy.x = 10 + (Math.random() * (canvas.width - 20));
+            emy.y = 10 + (Math.random() * (canvas.height - 20));
+
+        };
+        //计数器
+        var count=0;
+
+
+        //初始化hero对象
+        var heroimg = new Image();
+        heroimg.src = "img/hero.png";
+        var hero = {
+            x:550,
+            y:550,
+            speed:40
+        };
+
+       //刷新并且重新绘制
+        function flashMap() {
+            cxt.clearRect(0, 0, canvas.width,canvas.height);
+            Drawhero(hero);
+            DrawEmy(emy);
+            pick(hero,emy);
+        }
+
+        //方向控制
+        addEventListener("keydown", function (e) {
+            if(e.keyCode == 87){
+                hero.y -= hero.speed;
+                flashMap();
+            }
+            if(e.keyCode == 83){
+                hero.y += hero.speed;
+                Drawhero(hero);
+                flashMap();
+            }
+            if(e.keyCode == 65){
+                hero.x -= hero.speed;
+                Drawhero(hero);
+                flashMap();
+            }
+            if(e.keyCode == 68){
+                hero.x += hero.speed;
+                Drawhero(hero);
+                flashMap();
+            }
+
+        }, false);
+
+
+
+        //绘制hero
+        Drawhero(hero);
+        function Drawhero(hero) {
+            cxt.drawImage(heroimg,hero.x,hero.y);
+        }
+        //绘制emy
+        function DrawEmy(emy) {
+            cxt.fillStyle=emy.color;
+            cxt.fillRect(emy.x,emy.y,25,25);
+            cxt.closePath();
+        }
+        //碰撞检测
+        function pick(hero,emy) {
+            var a = document.getElementById("a");
+            if (
+                hero.x+25 >= emy.x && hero.x <= emy.x+25
+                && hero.y+25>=emy.y && hero.y<=emy.y+25
+            ) {
+                reset();
+                count++;
+            }
+            a.innerHTML=count;  //输出分数
+        }
+
+    }
+</script>
+</body>
+</html>
